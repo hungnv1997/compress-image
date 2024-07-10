@@ -220,7 +220,10 @@ export default {
     min-width: 768px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    padding: 1rem;
+    padding: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   &__canvas {
     max-width: 100%;
