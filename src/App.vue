@@ -119,7 +119,7 @@ export default {
         console.error("Unsupported file type. Please upload an image.");
         return;
       }
-
+      this.scale = 1;
       // Read the file and update the canvas
       const reader = new FileReader();
       reader.onload = this.handleFileLoad;
