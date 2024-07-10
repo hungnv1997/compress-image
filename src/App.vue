@@ -1,53 +1,64 @@
 <template>
+  <h1 class="title">Compress Image</h1>
   <div class="image-compressor">
     <input
       type="file"
       @change="onChange"
       class="image-compressor__input-file"
     />
-    <input
-      type="range"
-      v-model="compressionLevel"
-      min="1"
-      max="100"
-      class="image-compressor__input-range"
-    />
-    <input
-      type="range"
-      v-model="scale"
-      min="0.1"
-      max="2"
-      step="0.1"
-      class="image-compressor__input-scale"
-    />
-    <div class="image-compressor__dimensions">
-      <label
-        >Width:
-        <input
-          type="number"
-          v-model="canvasWidth"
-          class="image-compressor__input-dimension"
-        />
-      </label>
-      <label
-        >Height:
-        <input
-          type="number"
-          v-model="canvasHeight"
-          class="image-compressor__input-dimension"
-        />
-      </label>
+    <div class="image-compressor__image-import">
+      <canvas
+        ref="previewCanvas"
+        :width="canvasWidth"
+        :height="canvasHeight"
+        class="image-compressor__canvas"
+      ></canvas>
     </div>
-    <canvas
-      ref="previewCanvas"
-      :width="canvasWidth"
-      :height="canvasHeight"
-      class="image-compressor__canvas"
-    ></canvas>
-    <p class="image-compressor__info">
-      Compressed Image Size: {{ compressedImageSize }} bytes
-    </p>
     <div class="image-compressor__download">
+      <div class="image-compressor__config">
+        <div class="image-compressor__config__range">
+          <p class="image-compressor__config__range__title">Compress:</p>
+          <input
+            type="range"
+            v-model="compressionLevel"
+            min="1"
+            max="100"
+            class="image-compressor__config__input-range"
+          />
+        </div>
+        <div class="image-compressor__config__range">
+          <p class="image-compressor__config__range__title">Resize:</p>
+          <input
+            type="range"
+            v-model="scale"
+            min="0.1"
+            max="2"
+            step="0.1"
+            class="image-compressor__config__input-scale"
+          />
+        </div>
+        <div class="image-compressor__config__dimensions">
+          <label
+            >Width:
+            <input
+              type="number"
+              v-model="canvasWidth"
+              class="image-compressor__config__input-dimension"
+            />
+          </label>
+          <label
+            >Height:
+            <input
+              type="number"
+              v-model="canvasHeight"
+              class="image-compressor__config__input-dimension"
+            />
+          </label>
+        </div>
+      </div>
+      <p class="image-compressor__info">
+        Image Size: {{ compressedImageSize }} bytes
+      </p>
       <label>Download Format:</label>
       <select v-model="downloadFormat" class="image-compressor__select">
         <option value="jpeg">JPEG</option>
@@ -55,7 +66,7 @@
         <option value="webp">WebP</option>
       </select>
       <button @click="downloadImage" class="image-compressor__button">
-        Download Compressed Image
+        Download
       </button>
     </div>
   </div>
@@ -136,7 +147,7 @@ export default {
         const drawWidth = img.width * scale;
         const drawHeight = img.height * scale;
         this.canvasWidth = drawWidth;
-        this.canvasHeight = drawWidth;
+        this.canvasHeight = drawHeight;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(
           img,
@@ -185,89 +196,167 @@ export default {
 </script>
 
 <style lang="scss">
+.title {
+  color: #333;
+}
 .image-compressor {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 20px;
+  gap: 1rem;
+  padding: 1rem;
   background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
-  &__input-file,
-  &__input-range,
-  &__input-scale,
-  &__select {
-    margin: 10px 0;
-    padding: 10px;
-    border-radius: 5px;
+  &__input-file {
+    padding: 0.5rem;
     border: 1px solid #ccc;
-    font-size: 16px;
+    border-radius: 4px;
+    background-color: #fff;
+    cursor: pointer;
   }
-
-  &__dimensions {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-
-    label {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      font-size: 14px;
-      color: #555;
-
-      .image-compressor__input-dimension {
-        width: 80px;
-        margin-top: 5px;
-        padding: 5px;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-        font-size: 16px;
-      }
-    }
+  &__image-import {
+    max-width: 768px;
+    min-width: 768px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 1rem;
   }
-
   &__canvas {
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    margin: 20px 0;
+    max-width: 100%;
   }
 
   &__info {
-    font-size: 16px;
-    margin: 10px 0;
-    color: #555;
+    font-size: 0.9rem;
+    color: #666;
   }
 
   &__download {
     display: flex;
-    align-items: center;
-    margin-top: 20px;
+    flex-direction: column;
+    gap: 0.5rem;
 
     label {
-      font-size: 16px;
-      margin-right: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #333;
     }
 
     .image-compressor__select {
-      width: 100px;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      outline: none;
+      transition: border-color 0.3s;
+
+      &:focus {
+        border-color: #4caf50;
+      }
     }
 
     .image-compressor__button {
-      padding: 10px 20px;
-      background-color: #007bff;
+      padding: 0.75rem 1rem;
+      background-color: #4caf50;
       color: #fff;
       border: none;
-      border-radius: 5px;
+      border-radius: 4px;
       cursor: pointer;
-      font-size: 16px;
       transition: background-color 0.3s;
 
       &:hover {
-        background-color: #0056b3;
+        background-color: #45a049;
       }
+    }
+  }
+
+  &__config {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    &__range {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+
+      &__title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #333;
+        min-width: 76px;
+        max-width: 76px;
+      }
+
+      .image-compressor__config__input-range,
+      .image-compressor__config__input-scale {
+        flex-grow: 1;
+        -webkit-appearance: none;
+        width: 100%;
+        height: 6px;
+        background: #ddd;
+        border-radius: 5px;
+        outline: none;
+        transition: background 0.3s;
+
+        &::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          appearance: none;
+          width: 16px;
+          height: 16px;
+          background: #4caf50;
+          border-radius: 50%;
+          cursor: pointer;
+        }
+
+        &::-moz-range-thumb {
+          width: 16px;
+          height: 16px;
+          background: #4caf50;
+          border-radius: 50%;
+          cursor: pointer;
+        }
+      }
+    }
+
+    &__dimensions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+
+      label {
+        display: flex;
+        flex-direction: column;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #333;
+
+        .image-compressor__config__input-dimension {
+          margin-top: 0.5rem;
+          padding: 0.5rem;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          outline: none;
+          font-size: 1rem;
+          transition: border-color 0.3s;
+
+          &:focus {
+            border-color: #4caf50;
+          }
+        }
+      }
+    }
+  }
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+
+    &__config {
+      flex: 1;
+    }
+
+    &__download {
+      flex: 1;
+      align-items: flex-start;
     }
   }
 }
